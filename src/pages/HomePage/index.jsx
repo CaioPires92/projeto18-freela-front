@@ -2,6 +2,8 @@ import { useState } from 'react'
 import ServiceCard from '../../components/CardService'
 import { Container, ServiceList } from './styled'
 
+
+
 function HomePage() {
   const [services, setServices] = useState([
     {
@@ -54,6 +56,16 @@ function HomePage() {
     }
     // Adicione mais serviços aqui...
   ])
+
+
+
+  function handleLogout() {
+    localStorage.removeItem('token')
+    const { setUser } = useContext(AuthContext)
+    setUser(null) // Limpar o estado do usuário autenticado
+    const navigate = useNavigate()
+    navigate('/login')
+  }
 
   const handleEditService = editedService => {
     // Implemente a lógica de edição do serviço aqui

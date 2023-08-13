@@ -1,10 +1,10 @@
-import { useNavigate } from 'react-router-dom'
 import { Button, Container, Input, SigninLink, SignupForm } from './styled'
-import { useState } from 'react'
-import axios from 'axios'
+import { useQuickIn } from '../../hooks/useQuickIn'
+import useForm from '../../hooks/useForm'
+import { useSignup } from '../../services/auth'
 
 export default function SignupPage() {
-  const [form, setForm] = useState({
+  const { form, handleForm } = useForm({
     name: '',
     email: '',
     password: '',
@@ -13,24 +13,16 @@ export default function SignupPage() {
     city: ''
   })
 
-  function handleForm(e) {
-    setForm({ ...form, [e.target.name]: e.target.value })
-  }
-
-  const navigate = useNavigate()
+  useQuickIn()
+  const signUp = useSignup()
 
   function submitForm(e) {
     e.preventDefault()
-    if (form.password !== form.confirmPassword) {
-      alert(`As senhas não coincidem!`)
-      return
-    }
+    if (form.password !== form.confirmPassword)
+      return alert(`As senhas não coincidem!`)
 
     delete form.confirmPassword
-    axios
-      .post(`${import.meta.env.VITE_API_URL}/signup`, form)
-      .then(res => navigate('/login'))
-      .catch(err => alert(err.response.data))
+    signUp(form)
   }
 
   return (
