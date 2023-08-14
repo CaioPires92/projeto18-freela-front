@@ -59,3 +59,18 @@ export const DeleteButton = styled.button`
   padding: 6px 12px;
   cursor: pointer;
 `
+
+export const ProviderInfo = styled.div`
+  background-color: #f9f9f9;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 8px;
+`
+
+export const ProviderName = styled.p`
+  font-weight: bold;
+`
+
+export const ProviderDetail = styled.p`
+  margin: 5px 0;
+`

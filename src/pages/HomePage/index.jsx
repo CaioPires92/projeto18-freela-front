@@ -9,7 +9,6 @@ function HomePage() {
   const [services, setServices] = useState([])
   const [categories, setCategories] = useState([])
   const [serviceProvider, setServiceProvider] = useState([])
-
   const [showEditModal, setShowEditModal] = useState(false)
   const [selectedService, setSelectedService] = useState(null)
   const { token } = useContext(AuthContext)
@@ -18,8 +17,17 @@ function HomePage() {
     axios
       .get(`${import.meta.env.VITE_API_URL}/services`)
       .then(res => {
-        setServices(res.data)
-        console.log(res.data)
+        const updatedServices = res.data.map(service => {
+          const correspondingProvider = serviceProvider.find(
+            provider => provider.id === service.user_id
+          )
+          return {
+            ...service,
+            serviceProvider: correspondingProvider
+          }
+        })
+
+        setServices(updatedServices)
       })
       .catch(err => {
         console.log('Erro ao obter serviços: ', err)
@@ -29,7 +37,6 @@ function HomePage() {
       .get(`${import.meta.env.VITE_API_URL}/categories`)
       .then(res => {
         setCategories(res.data)
-        console.log(res.data)
       })
       .catch(err => {
         console.log('Erro ao obter categorias: ', err)
@@ -39,7 +46,6 @@ function HomePage() {
       .get(`${import.meta.env.VITE_API_URL}/user`)
       .then(res => {
         setServiceProvider(res.data)
-        console.log(res.data)
       })
       .catch(err => {
         console.log('Erro ao obter usuario: ', err)
@@ -64,7 +70,7 @@ function HomePage() {
   }
 
   const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL, // Substitua pela URL da sua API
+    baseURL: import.meta.env.VITE_API_URL,
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -77,7 +83,6 @@ function HomePage() {
         setServices(prevServices =>
           prevServices.filter(service => service.id !== serviceId)
         )
-        console.log(`Service with ID ${serviceId} has been deleted`)
       })
       .catch(error => {
         console.error('Error deleting service:', error.response.data)
@@ -97,7 +102,6 @@ function HomePage() {
             serviceProvider={serviceProvider}
           />
         ))}
-        {/* Renderize o modal de edição */}
         {showEditModal && (
           <EditServiceModal
             service={selectedService}
