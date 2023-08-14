@@ -4,6 +4,7 @@ import { Container, ServiceList } from './styled'
 import axios from 'axios'
 import EditServiceModal from '../../components/editServiceModal'
 import AuthContext from '../../contexts/authContext'
+import { Button, Form, Modal } from 'react-bootstrap'
 
 function HomePage() {
   const [services, setServices] = useState([])
@@ -12,6 +13,56 @@ function HomePage() {
   const [showEditModal, setShowEditModal] = useState(false)
   const [selectedService, setSelectedService] = useState(null)
   const { token } = useContext(AuthContext)
+
+  const [showCreateModal, setShowCreateModal] = useState(false)
+
+  const [newService, setNewService] = useState({
+    title: '',
+    description: '',
+    category_id: '',
+    photo_url: '',
+    price: '',
+    is_active: true
+  })
+
+  const handleCreateService = () => {
+    setShowCreateModal(true)
+  }
+
+  const handleCreateNewService = event => {
+    const { name, value, type, checked } = event.target
+
+    // Handle checkbox inputs
+    const inputValue = type === 'checkbox' ? checked : value
+
+    setNewService(prevNewService => ({
+      ...prevNewService,
+      [name]: inputValue
+    }))
+  }
+
+  const handleSaveCreate = async () => {
+    try {
+      const response = await api.post(
+        `${import.meta.env.VITE_API_URL}/services`,
+        newService
+      )
+
+      // Faz uma nova chamada para obter a lista atualizada de serviços
+      const updatedServicesResponse = await api.get(
+        `${import.meta.env.VITE_API_URL}/services`
+      )
+
+      setServices(updatedServicesResponse.data)
+      handleCloseCreateModal()
+    } catch (error) {
+      console.error('Error creating service:', error.response.data)
+    }
+  }
+
+  const handleCloseCreateModal = () => {
+    setShowCreateModal(false)
+  }
 
   useEffect(() => {
     axios
@@ -92,6 +143,7 @@ function HomePage() {
   return (
     <Container>
       <h1>Services</h1>
+
       <ServiceList>
         {services.map(service => (
           <ServiceCard
@@ -102,6 +154,7 @@ function HomePage() {
             serviceProvider={serviceProvider}
           />
         ))}
+
         {showEditModal && (
           <EditServiceModal
             service={selectedService}
@@ -110,7 +163,88 @@ function HomePage() {
             categories={categories}
           />
         )}
+        <Modal show={showCreateModal} onHide={handleCloseCreateModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Create New Service</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Group controlId="formName">
+                <Form.Label>Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="title"
+                  value={newService.title}
+                  onChange={handleCreateNewService}
+                />
+              </Form.Group>
+              <Form.Group controlId="formDescription">
+                <Form.Label>Description</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="description"
+                  value={newService.description}
+                  onChange={handleCreateNewService}
+                />
+              </Form.Group>
+              <Form.Group controlId="formCategory">
+                <Form.Label>Category</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="category_id"
+                  value={newService.category_id}
+                  onChange={handleCreateNewService}
+                />
+              </Form.Group>
+
+              <Form.Group controlId="formPhotoUrl">
+                <Form.Label>Image URL</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="photo_url"
+                  value={newService.photo_url}
+                  onChange={handleCreateNewService}
+                />
+              </Form.Group>
+
+              <Form.Group controlId="formPrice">
+                <Form.Label>Price</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="price"
+                  value={newService.price}
+                  onChange={handleCreateNewService}
+                />
+              </Form.Group>
+
+              <Form.Group controlId="formIsActive">
+                <Form.Check
+                  type="checkbox"
+                  label="Active"
+                  name="is_active"
+                  defaultChecked={true}
+                  value={newService.is_active}
+                  onChange={handleCreateNewService}
+                />
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseCreateModal}>
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => handleSaveCreate(newService)}
+            >
+              Save
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </ServiceList>
+      <Button variant="primary" onClick={handleCreateService}>
+        Create New Service
+      </Button>
     </Container>
   )
 }

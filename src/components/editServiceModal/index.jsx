@@ -5,14 +5,22 @@ import axios from 'axios'
 import AuthContext from '../../contexts/authContext'
 
 const EditServiceModal = ({ service, onSave, categories, onClose }) => {
-  const [editedService, setEditedService] = useState({ ...service })
   const { token } = useContext(AuthContext)
 
+  const [editedService, setEditedService] = useState({
+    ...service,
+    is_active: service.is_active || false
+  })
+
   const handleInputChange = event => {
-    const { name, value } = event.target
+    const { name, value, type, checked } = event.target
+
+    // Handle checkbox inputs
+    const inputValue = type === 'checkbox' ? checked : value
+
     setEditedService(prevService => ({
       ...prevService,
-      [name]: value
+      [name]: inputValue
     }))
   }
 
@@ -49,7 +57,7 @@ const EditServiceModal = ({ service, onSave, categories, onClose }) => {
       </Modal.Header>
       <Modal.Body>
         <Form>
-          <Form.Group controlId="formCategory">
+         <Form.Group controlId="formCategory">
             <Form.Label>Category</Form.Label>
             <Form.Control
               as="select"
@@ -60,7 +68,7 @@ const EditServiceModal = ({ service, onSave, categories, onClose }) => {
               {categories.map(category => (
                 <option key={category.category_id} value={category.name}>
                   {category.name}
-                </option>
+                 </option>
               ))}
             </Form.Control>
           </Form.Group>
@@ -82,6 +90,8 @@ const EditServiceModal = ({ service, onSave, categories, onClose }) => {
               onChange={handleInputChange}
             />
           </Form.Group>
+
+
           <Form.Group controlId="formPrice">
             <Form.Label>Price</Form.Label>
             <Form.Control
@@ -90,6 +100,23 @@ const EditServiceModal = ({ service, onSave, categories, onClose }) => {
               value={editedService.price}
               onChange={handleInputChange}
             />
+          </Form.Group>
+
+
+          
+          <Form.Group controlId="formIsActive">
+            <Button
+              variant={editedService.is_active ? 'success' : 'danger'}
+              style={{ marginTop: '10px' }}
+              onClick={() =>
+                setEditedService(prevService => ({
+                  ...prevService,
+                  is_active: !prevService.is_active
+                }))
+              }
+            >
+              {editedService.is_active ? 'Active' : 'Inactive'}
+            </Button>
           </Form.Group>
         </Form>
       </Modal.Body>
