@@ -9,8 +9,11 @@ import { useState } from 'react'
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('token'))
   const [userName, setUserName] = useState(localStorage.getItem('name'))
+  const [userId, setUserId] = useState(Number(localStorage.getItem('id')))
   return (
-    <AuthContext.Provider value={{ token, setToken, userName, setUserName }}>
+    <AuthContext.Provider
+      value={{ token, setToken, userName, setUserName, userId, setUserId }}
+    >
       <BrowserRouter>
         <Header />
         <Routes>

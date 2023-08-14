@@ -1,5 +1,6 @@
-import { createGlobalStyle } from "styled-components";
-import { mainColorButton, mainContrastColor } from "../constants/colors";
+import { createGlobalStyle } from 'styled-components'
+import { mainColorButton, mainContrastColor } from '../constants/colors'
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 const GlobalStyle = createGlobalStyle`
     * {

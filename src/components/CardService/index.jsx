@@ -8,25 +8,35 @@ import {
   ServicePrice,
   ButtonContainer,
   EditButton,
-  DeleteButton
+  DeleteButton,
+  ServiceDescription
 } from './styled'
+import { useContext } from 'react'
+import AuthContext from '../../contexts/authContext'
 
 function ServiceCard({ service, onEdit, onDelete }) {
-  const { image, category, name, price } = service
+  const { photo_url, category, title, price, description } = service
+  const { token, userId } = useContext(AuthContext)
+
+  const isUserOwner = userId === service.user_id
 
   return (
     <Card>
-      <CardImage src={image} alt={name} />
+      <CardImage src={photo_url} alt={title} />
       <CardContent>
         <ServiceCategory>{category}</ServiceCategory>
-        <ServiceTitle>{name}</ServiceTitle>
-        <ServicePrice>{price}</ServicePrice>
-        <ButtonContainer>
-          <EditButton onClick={() => onEdit(service)}>Edit</EditButton>
-          <DeleteButton onClick={() => onDelete(service.id)}>
-            Delete
-          </DeleteButton>
-        </ButtonContainer>
+
+        <ServiceTitle>{title}</ServiceTitle>
+        <ServiceDescription>{description}</ServiceDescription>
+        <ServicePrice>{`R$ ${price.replace('.', ',')}`}</ServicePrice>
+        {token && isUserOwner && (
+          <ButtonContainer>
+            <EditButton onClick={() => onEdit(service)}>Edit</EditButton>
+            <DeleteButton onClick={() => onDelete(service.id)}>
+              Delete
+            </DeleteButton>
+          </ButtonContainer>
+        )}
       </CardContent>
     </Card>
   )

@@ -15,7 +15,7 @@ export function useSignup() {
 
 export function useSignIn() {
   const navigate = useNavigate()
-  const { setToken, setUserName } = useContext(AuthContext)
+  const { setToken, setUserName, setUserId } = useContext(AuthContext)
 
   return body => {
     axios
@@ -23,8 +23,10 @@ export function useSignIn() {
       .then(res => {
         setToken(res.data.token)
         setUserName(res.data.username)
+        setUserId(res.data.id)
         localStorage.setItem('token', res.data.token)
         localStorage.setItem('name', res.data.username)
+        localStorage.setItem('id', res.data.id)
         navigate('/')
       })
       .catch(err => alert(err.response.data.message))

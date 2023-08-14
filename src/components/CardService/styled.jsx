@@ -24,6 +24,15 @@ export const ServiceTitle = styled.h3`
   font-size: 18px;
   margin: 10px 0;
 `
+export const ServiceProviderInfo = styled.h3`
+  font-size: 18px;
+  margin: 10px 0;
+`
+
+export const ServiceDescription = styled.p`
+  font-size: 18px;
+  margin: 10px 0;
+`
 
 export const ServicePrice = styled.div`
   font-size: 16px;
